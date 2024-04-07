@@ -3,6 +3,7 @@ from fifo import Fifo
 import time
 from ssd1306 import SSD1306_I2C
 
+# Led- and Encoder-class not created by me, provided by teacher/school. 
 class Led:
     """Dimmable LED class that implements the same interface as Pin (GPIO pin class).
     Adds method brightness() that is used to set brightness of the LED on state.
@@ -83,6 +84,7 @@ class Button:
 
         return False
 
+# Encoder class also from school provided content
 class Encoder:
     def __init__(self, rotary_a, rotary_b):
         self.a = Pin(rotary_a, Pin.IN, Pin.PULL_UP)
@@ -112,7 +114,7 @@ selection = 0
 led_state = "OFF"
 
 
-def update_screen(selection, led_state):
+def update_screen(selection, led_state): # update selector position and led-state
     oled.fill(0)
     for i, led in enumerate(menu_items):
         if i == selection:
@@ -130,20 +132,20 @@ while True:
         menu_items[selection].toggle()
         time.sleep_ms(50)  # Button debounce 
 
-    while encoder.fifo.has_data():
+    while encoder.fifo.has_data(): # logic for moving the cursor/selector
         turn = encoder.fifo.get()
-        if turn > 0:
+        if turn > 0: 
             time.sleep_ms(50)
             selection = (selection + 1) % len(menu_items)
         else:
             time.sleep_ms(50)
             selection = (selection - 1) % len(menu_items)
         
-        if menu_items[selection].value():
+        if menu_items[selection].value(): # update led state on screen
             led_state = "ON"
         else:
             led_state = "OFF"
 
         update_screen(selection, led_state)
 
-    time.sleep_ms(20)  # Main loop delay
+    time.sleep_ms(20)  # Main loop delay, because why not
